@@ -1,0 +1,68 @@
+<div class="container">
+  <div class='panel panel-primary'>
+    <div class='panel-heading'>
+      {{pageTitle}}
+    </div>
+    <div *ngIf="errorMessage">
+      {{errorMessage}}
+    </div>
+    <app-loading [context]='context' (loadingTimeout)="timedOut($event)" *ngIf='githubUsers.length === 0'> </app-loading>
+    <div class='panel-body' *ngIf="githubUsers.length">
+      <div class='row'>
+        <div class='col-md-2'>Enter User:</div>
+        <div class='col-md-4'>
+          <input id="name" name="name" autofocus=true type='text' class="form-control" [(ngModel)]='newUser' required minlength="4"
+            appForbiddenName="angular" #name="ngModel" />
+        </div>
+        <div *ngIf="name.invalid && (name.dirty || name.touched)" class="alert alert-danger">
+
+          <div *ngIf="name.errors.required">
+            Name is required.
+          </div>
+          <div *ngIf="name.errors.minlength">
+            Name must be at least 4 characters long.
+          </div>
+          <div *ngIf="name.errors.appForbiddenName">
+            Name cannot be Bob.
+          </div>
+
+        </div>
+        <div class='col-md-6'>
+          <button class='btn btn-primary' (click)='name.valid && getUser(newUser)'>Add User</button>
+        </div>
+      </div>
+      <div class='table-responsive'>
+        <table class='table'>
+          <thead>
+            <tr>
+              <th>
+                <button class='btn btn-primary' (click)='toggleImage()'>
+                  {{showImage ? 'Hide' : 'Show'}} Image
+                </button>
+              </th>
+              <th>id</th>
+              <th>Name</th>
+              <th>Blog</th>
+              <th>Repos</th>
+              <th>Created on</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor='let githubUser of githubUsers'>
+              <td>
+                <img *ngIf="showImage" [src]='githubUser.avatar_url' [title]='githubUser.name' [style.width.px]='imageWidth' [style.margin.px]='imageMargin'>
+              </td>
+              <td>{{ githubUser.id }}</td>
+              <td [routerLink]="['/githubUsers', githubUser.name]" (click)="setGithubuser(githubUser.name)">
+                <a>{{ githubUser.name }}</a>
+              </td>
+              <td>{{ githubUser.blog }}</td>
+              <td>{{ githubUser.public_repos }}</td>
+              <td>{{ githubUser.created_at | date: 'yyyy-MMM-dd' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
